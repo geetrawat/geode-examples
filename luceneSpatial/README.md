@@ -23,6 +23,28 @@ to customize how Geode data is stored and indexed in Lucene.
 In this example two servers host a partitioned region that stores train station stop information,
 including GPS coordinates. The region has lucene index that allows spatial queries to be performed
 against the data. The example shows how to do a spatial query to find nearby train stations.
+    
+    # Get the address from the location (longitude and latitude)
+    In order to get the address from the location, Geocoder api from google can be used. An example to use this API as follows:
+    
+        private static LatLng getLatLng(String address) {
+    
+            Geocoder geocoder = null;
+            GeoAddressService service = null;
+            String apiKey = "API_KEY";
+            String clientId = "CLIENT_ID";
+    
+            try {
+             geocoder = new Geocoder(clientId, apiKey);
+              service = new GeoAddressService(geocoder);
+              return service.getLatLngPointsByAddress(address);
+            } catch (InvalidKeyException | IOException e) {
+                 e.printStackTrace();
+              return null;
+            }
+         }
+
+
 
 This example assumes that Java and Geode are installed.
 
