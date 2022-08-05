@@ -49,10 +49,13 @@ public class ExampleMakeAShape {
 
   public static void putEntries(LuceneService luceneService, Map<String, TrainStop> region)
       throws InterruptedException {
-    region.put("McD1", new TrainStop("McD1", -80.190, 25.774));
-    region.put("McD2", new TrainStop("McD2", -66.118, 18.466));
-    region.put("McD3", new TrainStop("McD3", -64.757, 32.321));
-    region.put("McD4", new TrainStop("McD4", -80.190, 25.774));
+    region.put("McD1", new TrainStop("McD1", -46.653, -23.543));
+    region.put("McD2", new TrainStop("McD2", -46.634, -23.5346));
+    region.put("McD3", new TrainStop("McD3", -46.613, -23.543));
+    region.put("McD4", new TrainStop("McD3", -46.614, -23.559));
+    region.put("McD5", new TrainStop("McD3", -46.631, -23.567));
+    region.put("McD6", new TrainStop("McD3", -46.653, -23.560));
+    region.put("McD7", new TrainStop("McD3", -46.653, -23.543));
 
     luceneService.waitUntilFlushed("simpleIndex2", "example-region-make-shape", 1, TimeUnit.MINUTES);
   }

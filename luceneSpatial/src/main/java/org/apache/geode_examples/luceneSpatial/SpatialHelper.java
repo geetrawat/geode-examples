@@ -14,6 +14,9 @@
  */
 package org.apache.geode_examples.luceneSpatial;
 
+import com.vividsolutions.jts.algorithm.PointLocator;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.query.SpatialArgs;
@@ -72,7 +75,7 @@ public class SpatialHelper {
   }
 
   public static Shape getAShapeFromCoordinates(List<Double> longitudeList,
-      List<Double> latitudeList) {
+                                               List<Double> latitudeList) {
 
     JtsSpatialContextFactory jtsSpatialContextFactory = new JtsSpatialContextFactory();
     JtsSpatialContext jtsSpatialContext = jtsSpatialContextFactory.newSpatialContext();
@@ -81,6 +84,22 @@ public class SpatialHelper {
     return polygonBuilder.pointXY(latitudeList.get(0), longitudeList.get(0))
         .pointXY(latitudeList.get(1), longitudeList.get(1))
         .pointXY(latitudeList.get(2), longitudeList.get(2))
-        .pointXY(latitudeList.get(3), longitudeList.get(3)).build();
+        .pointXY(latitudeList.get(3), longitudeList.get(3))
+        .pointXY(latitudeList.get(4), longitudeList.get(4))
+        .pointXY(latitudeList.get(5), longitudeList.get(5))
+        .pointXY(latitudeList.get(6), longitudeList.get(6))
+            .build();
   }
+
+  public static boolean verifyLocationIsInsideShape(List<Double> longitudeList, List<Double> latitudeList,double givenLongitude, double givenLatitude) {
+    Geometry geometry = JtsSpatialContext.GEO.getShapeFactory()
+            .getGeometryFrom(getAShapeFromCoordinates(longitudeList,latitudeList));
+//    System.out.println(geometry.getArea());
+
+    Coordinate givenCoordinate=new Coordinate(givenLatitude,givenLongitude);
+    PointLocator pointLocator = new PointLocator();
+    return pointLocator.intersects(givenCoordinate,geometry);
+  }
+
+
 }
