@@ -68,14 +68,13 @@ public class SpatialHelper {
     return new PointImpl(longitude, latitude, CONTEXT);
   }
 
-  public static double getDistanceInMiles(double lat1, double long1, double lat2,
-      double long2) {
-     double sortKey = SloppyMath.haversinSortKey(lat1, long1, lat2, long2);
-     return (SloppyMath.haversinMeters(sortKey)) * 0.00062137119;
+  public static double getDistanceInMiles(double lat1, double long1, double lat2, double long2) {
+    double sortKey = SloppyMath.haversinSortKey(lat1, long1, lat2, long2);
+    return (SloppyMath.haversinMeters(sortKey)) * 0.00062137119;
   }
 
   public static Shape getAShapeFromCoordinates(List<Double> longitudeList,
-                                               List<Double> latitudeList) {
+      List<Double> latitudeList) {
 
     JtsSpatialContextFactory jtsSpatialContextFactory = new JtsSpatialContextFactory();
     JtsSpatialContext jtsSpatialContext = jtsSpatialContextFactory.newSpatialContext();
@@ -87,18 +86,16 @@ public class SpatialHelper {
         .pointXY(latitudeList.get(3), longitudeList.get(3))
         .pointXY(latitudeList.get(4), longitudeList.get(4))
         .pointXY(latitudeList.get(5), longitudeList.get(5))
-        .pointXY(latitudeList.get(6), longitudeList.get(6))
-            .build();
+        .pointXY(latitudeList.get(6), longitudeList.get(6)).build();
   }
 
-  public static boolean verifyLocationIsInsideShape(List<Double> longitudeList, List<Double> latitudeList,double givenLongitude, double givenLatitude) {
+  public static boolean verifyLocationIsInsideShape(List<Double> longitudeList,
+      List<Double> latitudeList, double givenLongitude, double givenLatitude) {
     Geometry geometry = JtsSpatialContext.GEO.getShapeFactory()
-            .getGeometryFrom(getAShapeFromCoordinates(longitudeList,latitudeList));
-//    System.out.println(geometry.getArea());
-
-    Coordinate givenCoordinate=new Coordinate(givenLatitude,givenLongitude);
+        .getGeometryFrom(getAShapeFromCoordinates(longitudeList, latitudeList));
+    Coordinate givenCoordinate = new Coordinate(givenLatitude, givenLongitude);
     PointLocator pointLocator = new PointLocator();
-    return pointLocator.intersects(givenCoordinate,geometry);
+    return pointLocator.intersects(givenCoordinate, geometry);
   }
 
 

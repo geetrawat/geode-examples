@@ -15,52 +15,31 @@
 package org.apache.geode_examples.luceneSpatial;
 
 import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.cache.client.ClientCacheFactory;
-import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.apache.geode.cache.lucene.LuceneQueryException;
 import org.apache.geode.cache.lucene.LuceneService;
-import org.apache.geode.cache.lucene.LuceneServiceProvider;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class ExampleFindDistanceBetweenTwoLocation {
-    public static void main(String[] args) throws InterruptedException, LuceneQueryException {
-        // connect to the locator using default port 10334
-        ClientCache cache = new ClientCacheFactory().addPoolLocator("127.0.0.1", 10334)
-                .set("log-level", "WARN").create();
+  public static void main(String[] args) throws InterruptedException {
+    // connect to the locator using default port 10334
+    Region<String, RegionInfo> region = ExampleCommon.createRegion();
+    LuceneService luceneService = ExampleCommon.luceneService(region);
+    // Add some entries into the region
+    ExampleCommon.putEntries(luceneService, region);
+    double sourceLat = 36.8738;
+    double sourceLong = -78.78412;
+    findDistance(region, sourceLat, sourceLong);
+    ExampleCommon.closeCache();
+  }
 
-        // create a local region that matches the server region
-        Region<String, TrainStop> region =
-                cache.<String, TrainStop>createClientRegionFactory(ClientRegionShortcut.PROXY)
-                        .create("example-region-find-distance");
-        LuceneService luceneService = LuceneServiceProvider.get(cache);
-        // Add some entries into the region
-        putEntries(luceneService, region);
-        findDistance(region);
-        cache.close();
-    }
+  public static void findDistance(Region<String, RegionInfo> region, double sourceLat,
+      double sourceLong) {
 
-    public static void putEntries(LuceneService luceneService, Map<String, TrainStop> region)
-            throws InterruptedException {
-        region.put("McD1", new TrainStop("McD1", -78.78318, 35.91112));
-        region.put("McD2", new TrainStop("McD2", -78.78217354060413, 35.91045305));
-        region.put("McD3", new TrainStop("McD3", -82.54409, 40.64817));
-        // Lucene indexing happens asynchronously, so wait for
-        // the entries to be in the lucene index.
-        luceneService.waitUntilFlushed("simpleIndex1", "example-region-find-distance", 1, TimeUnit.MINUTES);
+    Set<String> keySet = region.keySetOnServer();
+    for (String s : keySet) {
+      double distance = SpatialHelper.getDistanceInMiles(sourceLat, sourceLong,
+          region.get(s).getLatitude(), region.get(s).getLongitude());
+      System.out.println("Distance between the source and destination is : " + distance);
     }
-
-    public static void findDistance(Region<String, TrainStop> region) {
-        double sourceLat = 36.8738;
-        double sourceLong = -78.78412;
-        Set<String> keySet = region.keySetOnServer();
-        for (String s : keySet) {
-            double distance = SpatialHelper.getDistanceInMiles(sourceLat, sourceLong,
-                    region.get(s).getLatitude(), region.get(s).getLongitude());
-            System.out.println("Distance between the source and destination is : " + distance);
-        }
-    }
+  }
 }

@@ -14,21 +14,23 @@
  */
 package org.apache.geode_examples.luceneSpatial;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
-import org.apache.lucene.document.Document;
+import org.apache.geode.cache.lucene.LuceneService;
 import org.junit.Test;
 
-public class TrainStopSerializerTest {
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+public class ExampleTest {
 
   @Test
-  public void serializerReturnsSingleDocument() {
-    TrainStopSerializer serializer = new TrainStopSerializer();
-    Collection<Document> documents =
-        serializer.toDocuments(null, new TrainStop("here", -122.8515139, 45.5099231));
+  public void testPutEntries() throws InterruptedException {
+    LuceneService service = mock(LuceneService.class);
+    Map<String, TrainStop> region = new HashMap<String, TrainStop>();
+    Example.putEntries(service, region);
+    assertEquals(3, region.size());
 
-    assertEquals(1, documents.size());
   }
 }
